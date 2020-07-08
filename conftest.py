@@ -10,7 +10,7 @@ def pytest_addoption(parser):
                      help="Choose browser: chrome or firefox")
 
 
-@pytest.fixture()
+@pytest.fixture(scope="module")
 def browser(request):
     browser_name = request.config.getoption("browser_name")
     language = request.config.getoption("language")
@@ -19,6 +19,7 @@ def browser(request):
         print("\n Start Chrome browser for test...")
         options = Options()
         options.add_experimental_option("prefs", {"intl.accept_languages": language})
+        options.add_argument("--incognito")
         browser = webdriver.Chrome(options=options)
     elif browser_name == "firefox":
         print("\n Start Firefox browser for test...")
