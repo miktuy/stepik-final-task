@@ -1,6 +1,7 @@
 import pytest
 from time import sleep
 from pages.product_page import BookOrderPage
+from pages.basket_page import BasketPage
 from pages.login_page import LoginPage
 
 
@@ -70,5 +71,13 @@ def test_message_disappeared_after_adding_product_to_basket(browser, link):
     page.solve_quiz_and_get_code()
     page.should_be_disappeared_messages()
 
+@pytest.mark.parametrize('link', links)
+def test_guest_cant_see_product_in_basket_opened_from_product_page(browser, link):
+    page = BookOrderPage(browser, link)
+    page.open()
+    page.go_to_basket_page()
+    basket_page = BasketPage(browser, browser.current_url)
+    basket_page.should_be_empty_basket()
+    basket_page.should_be_empty_msg()
 
 
