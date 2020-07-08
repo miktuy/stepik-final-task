@@ -1,6 +1,5 @@
 import math
 
-from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException, NoAlertPresentException, TimeoutException
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -9,7 +8,7 @@ from .locators import BasePageLocators
 
 
 class BasePage:
-    def __init__(self, browser: webdriver.Chrome, url: str):
+    def __init__(self, browser, url: str):
         self.browser = browser
         self.url = url
 
