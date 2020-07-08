@@ -1,5 +1,7 @@
+import time
+
 import pytest
-from time import sleep
+
 from pages.product_page import BookOrderPage
 from pages.basket_page import BasketPage
 from pages.login_page import LoginPage
@@ -33,17 +35,6 @@ def test_guest_can_go_to_login_page_from_product_page(browser):
     login_page.should_be_login_page()
 
 
-@pytest.mark.parametrize('link', links)
-def test_guest_can_add_product_to_basket(browser, link):
-    page = BookOrderPage(browser, link)
-    page.open()
-    title = page.get_product_title()
-    page.should_be_add_to_basket_btn()
-    page.add_to_basket()
-    page.solve_quiz_and_get_code()
-    page.should_be_at_messages(title)
-
-
 @pytest.mark.skip
 @pytest.mark.parametrize('link', links)
 def test_guest_cant_see_success_message_after_adding_product_to_basket(browser, link):
@@ -52,12 +43,6 @@ def test_guest_cant_see_success_message_after_adding_product_to_basket(browser, 
     page.should_be_add_to_basket_btn()
     page.add_to_basket()
     page.solve_quiz_and_get_code()
-    page.should_not_be_at_messages()
-
-@pytest.mark.parametrize('link', links)
-def test_guest_cant_see_success_message(browser, link):
-    page = BookOrderPage(browser, link)
-    page.open()
     page.should_not_be_at_messages()
 
 
@@ -81,3 +66,28 @@ def test_guest_cant_see_product_in_basket_opened_from_product_page(browser, link
     basket_page.should_be_empty_msg()
 
 
+@pytest.mark.parametrize('link', links)
+class TestUserAddToBasketFromProductPage:
+    @pytest.fixture(autouse=True)
+    def setup(self, browser, link):
+        page = BookOrderPage(browser, link)
+        page.open()
+        page.go_to_login_page()
+        login_page = LoginPage(browser, browser.current_url)
+        email = f"{str(time.time())}@fakemail.org"
+        login_page.register_new_user(email=email, password="Siber!550")
+        login_page.should_be_authorized_user()
+
+    def test_user_cant_see_success_message(self, browser, link):
+        page = BookOrderPage(browser, link)
+        page.open()
+        page.should_not_be_at_messages()
+
+    def test_user_can_add_product_to_basket(self, browser, link):
+        page = BookOrderPage(browser, link)
+        page.open()
+        title = page.get_product_title()
+        page.should_be_add_to_basket_btn()
+        page.add_to_basket()
+        page.solve_quiz_and_get_code()
+        page.should_be_at_messages(title)
