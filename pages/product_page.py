@@ -11,10 +11,18 @@ class BookOrderPage(BasePage):
         self.browser.find_element(*BookOrderLocators.BTN_ADD_TO_BASKET).click()
 
     def should_be_at_messages(self, text):
-        assert self.is_element_present(*BookOrderLocators.ADDED_MESSAGES), \
+        assert self.is_element_present(*BookOrderLocators.ADDED_BOOK), \
             "No messages about added products"
-        messages = self.browser.find_element(*BookOrderLocators.ADDED_MESSAGES).text
-        assert text in messages, f"`{text}` should be in success message"
+        msg = self.browser.find_element(*BookOrderLocators.ADDED_BOOK).text
+        assert text == msg, f"`{text}` should be in success message. Now is `{msg}`"
+
+    def should_not_be_at_messages(self):
+        assert self.is_not_element_present(*BookOrderLocators.ADDED_BOOK), \
+            "Should not be success message"
+
+    def should_be_disappeared_messages(self):
+        assert self.is_disappeared(*BookOrderLocators.ADDED_BOOK), \
+            "message should disappear during time"
 
     def get_product_title(self):
         return self.browser.find_element(*BookOrderLocators.PRODUCT_TITLE).text

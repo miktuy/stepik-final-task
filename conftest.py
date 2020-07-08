@@ -10,7 +10,7 @@ def pytest_addoption(parser):
                      help="Choose browser: chrome or firefox")
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture()
 def browser(request):
     browser_name = request.config.getoption("browser_name")
     language = request.config.getoption("language")
